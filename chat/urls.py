@@ -8,4 +8,5 @@ router.register(r'messages', views.MessageViewSet, basename='message')
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('register/', views.register_user, name='register'),
 ]

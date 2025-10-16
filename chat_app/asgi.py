@@ -5,10 +5,7 @@ from django.core.asgi import get_asgi_application
 # Set Django settings module FIRST
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'chat_app.settings')
 
-# Get ASGI application for HTTP
-django_asgi_app = get_asgi_application()
-
-# Initialize Django
+# Initialize Django (this is crucial!)
 django.setup()
 
 # Now import WebSocket components AFTER Django setup
@@ -23,7 +20,7 @@ websocket_urlpatterns = [
 ]
 
 application = ProtocolTypeRouter({
-    "http": django_asgi_app,
+    "http": get_asgi_application(),
     "websocket": AuthMiddlewareStack(
         URLRouter(
             websocket_urlpatterns

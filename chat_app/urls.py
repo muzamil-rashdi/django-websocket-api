@@ -4,6 +4,7 @@ from django.http import JsonResponse
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 # API Documentation
 schema_view = get_schema_view(
@@ -23,29 +24,26 @@ def api_root(request):
         'endpoints': {
             'admin': '/admin/',
             'api_documentation': '/swagger/',
+            'auth_token': '/api/auth/token/',
+            'auth_refresh': '/api/auth/token/refresh/',
             'chat_rooms': '/api/chat/rooms/',
             'chat_messages': '/api/chat/messages/',
-            'websocket_endpoint': 'ws://localhost:8000/ws/chat/{room_name}/'
+            'websocket_endpoint': 'ws://localhost:8000/ws/chat/{room_id}/'
         },
         'webSocket_events': {
             'join': 'Automatically on connection',
             'chat_message': 'Send/receive messages',
             'typing': 'Typing indicators',
-            'user_activity': 'User join/leave notifications'
+            'user_activity': 'User join/leave notifications',
+            'active_users': 'Get list of active users'
         }
     })
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/chat/', include('chat.urls')),
+    path('api/auth/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('', api_root, name='api-root'),
-]
-
-# Include WebSocket URLs for Django Channels
-from django.urls import re_path
-from chat.consumers import ChatConsumer
-
-websocket_urlpatterns = [
-    re_path(r'ws/chat/(?P<room_name>\w+)/$', ChatConsumer.as_asgi()),
 ]

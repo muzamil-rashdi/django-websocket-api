@@ -4,19 +4,18 @@ import django
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'chat_app.settings')
 django.setup()
 
-# Test basic Django setup
-from django.apps import apps
-print("✅ Django apps loaded:")
-for app in apps.get_app_configs():
-    print(f"  - {app.name}")
-
-# Test models
-from chat.models import ChatRoom, Message
-print("✅ Models imported successfully")
-
-# Test channels
-from channels.layers import get_channel_layer
-channel_layer = get_channel_layer()
-print(f"✅ Channel layer: {channel_layer}")
-
-print("🎉 All imports successful!")
+# Test if consumer can be imported
+try:
+    from chat.consumers import ChatConsumer
+    print("✅ Consumer imported successfully")
+    
+    # Test if models work
+    from chat.models import ChatRoom
+    from django.contrib.auth.models import User
+    
+    user = User.objects.get(username='muzamil1')
+    room = ChatRoom.objects.get(id=2)
+    print(f"✅ Models work: User {user.username}, Room {room.name}")
+    
+except Exception as e:
+    print(f"❌ Error: {e}")
