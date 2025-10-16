@@ -41,3 +41,11 @@ urlpatterns = [
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('', api_root, name='api-root'),
 ]
+
+# Include WebSocket URLs for Django Channels
+from django.urls import re_path
+from chat.consumers import ChatConsumer
+
+websocket_urlpatterns = [
+    re_path(r'ws/chat/(?P<room_name>\w+)/$', ChatConsumer.as_asgi()),
+]
